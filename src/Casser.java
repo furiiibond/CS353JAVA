@@ -3,36 +3,102 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Casser {
-    // exercice 4
-    //load hashTable from file
-    public static Noeud[] loadHashTable(String fileName) {
-        Noeud[] hashTable = new Noeud[1000003];
-        try {
-            FileReader fileReader = new FileReader(fileName);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line;
-            int i = 0;
-            while ((line = bufferedReader.readLine()) != null) {
-                hashTable[i] = Noeud.fromString(line);
-                i++;
+
+    public static final int NODE_LEN = 1000003;
+
+    /*
+     *     Calcule 1 000 000 de chaînes et stocke pour chaque
+     *     chaîne les valeurs (PX et P999) dans une table de hachage
+     *     à adressage ouvert de taille 1 000 003
+     */
+    public static Noeud[] generateHashTable() {
+        Random r = new Random(0); // set la seed pour de la reproductabilité
+        Noeud[] rainbowTable = new Noeud[NODE_LEN]; // Création de la rainbowTable
+        Chaine chaine = new Chaine();
+        int px, p999, nbElm = 0;
+        boolean found;
+
+        for (int i = 0; i < 999999; i++) {//999999
+            px = r.nextInt(99999999); // Génère un nombre entre 0 et 99 999 999
+            p999 = chaine.calculChaine(px); // Egalement entre 0 et 99 999 999
+            found = false;
+            for (int j = 0; j < nbElm; j++) {
+                if (rainbowTable[j].p999 == p999) { // déjà inséré
+                    found = true;
+                    break;
+                }
             }
-            bufferedReader.close();
+            if (!found) { // clé non existante
+                rainbowTable[nbElm] = new Noeud(px, p999);
+                nbElm++;
+            }
+        }
+        return rainbowTable;
+    }
+
+    /*
+     *   Sauvegarde la table de hachage dans un fichier
+     *   afin de pouvoir l'utiliser plus tard
+     */
+    public static void saveHashTable(String fileName, Noeud[] rainbowtable) {
+        try {
+            FileOutputStream fos = new FileOutputStream(fileName);
+            ObjectOutputStream out = new ObjectOutputStream(fos);
+            out.writeObject(rainbowtable);
+            out.flush();
+            out.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return hashTable;
-    }
-    // casser un password
-    public static String casser(String hash, Noeud[] hashTable) {
-        // TODO: implement me
-        return "";
     }
 
-    public static void main(String[] args) {
-        Noeud[] table = Casser.loadHashTable("table.txt");
-        String password = "bonjour";
-        String md5 = Convertors.convertStringToMD5(password);
-        Casser.casser(md5, table);
+    /*
+     *   Charge la table de hachage depuis un fichier
+     */
+    public static Noeud[] loadHashTable(String fileName) {
+        Noeud[] rainbowtable = null;
+        try {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            rainbowtable = (Noeud[]) in.readObject();
+            in.close();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+        return rainbowtable;
+    }
 
+    /*
+     *  Casse le mot de passe du hash donné grâce à la rainbowTable
+     */
+    public static int casser(byte[] hash, Noeud[] rainbowTable) {
+        Chaine chaine = new Chaine();
+        Noeud node = null;
+        int px = 0, p999 = 0;
+        byte[] byteTab;
+
+        for (int i = 0; i <= 999; i++) {
+            p999 = chaine.reduction(hash, 999 - i);
+            p999 = chaine.calculChaine(p999, 1000 - i);
+
+            for (int j = 0; j < rainbowTable.length; j++) {
+                node = rainbowTable[j];
+                if (node == null)
+                    return -1; // on n'avait pas précalculé ce mot de passe là
+                if (node.p999 == p999) { // correspond
+                    px = node.px;
+                    px = chaine.calculChaine(px, 0, 999 - i);
+
+                    byteTab = Convertors.convertStringToMD5(Convertors.numberToString(px));
+                    if (byteTab == null)
+                        return -1;
+                    if (Arrays.equals(byteTab, hash)) { // matching
+                        return px;
+                    }
+                    break;
+                }
+            }
+        }
+        return -1;  // retourne -1 si le mot de passe n'est pas trouvé
     }
 }

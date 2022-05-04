@@ -8,7 +8,7 @@ public class Noeud {
     }
 
     public String toString() {
-        return px + "," + p999;
+        return Convertors.numberToString(px) + "," + Convertors.numberToString(p999);
     }
 
     //build a node from a string
