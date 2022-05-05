@@ -14,7 +14,7 @@ public class Table {
         passwordsToCrack.add("367F3AC1129CC92DCBB8C4B9EA4EE55A");
         passwordsToCrack.add("38251B4C8C210841C60CDE0B7E4C7A87");
 
-        generateAndSave(fileName); // première étape (à faire une seule fois)
+        //generateAndSave(fileName); // première étape (à faire une seule fois)
 
         cracking(fileName, passwordsToCrack); // si on a déjà un fichier de rainbowTable générée
 

@@ -84,17 +84,19 @@ public class Casser {
             for (int j = 0; j < rainbowTable.length; j++) {
                 node = rainbowTable[j];
                 if (node == null)
-                    return -1; // on n'avait pas précalculé ce mot de passe là
-                if (node.p999 == p999) { // correspond
+                    break;  // on a atteint la fin de la table
+                if (node.p999 == p999) { // correspond donc on vérifie qu'il n'y ai pas de colision
                     px = node.px;
-                    px = chaine.calculChaine(px, 0, 999 - i);
+                    for (int j = 0; j < 999; j++) {
+                        byteTab = Convertors.convertStringToMD5(Convertors.numberToString(px));  // hash de px
+                        if (byteTab == null) // par précaution
+                            break;
+                        if (Arrays.equals(byteTab, hash)) // matching
+                            return px; // got it
 
-                    byteTab = Convertors.convertStringToMD5(Convertors.numberToString(px));
-                    if (byteTab == null)
-                        return -1;
-                    if (Arrays.equals(byteTab, hash)) { // matching
-                        return px;
+                        px = chaine.reduction(byteTab, j); // sinon on le réduit une fois
                     }
+
                     break;
                 }
             }
