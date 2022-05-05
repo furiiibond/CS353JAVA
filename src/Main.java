@@ -8,7 +8,7 @@ public class Main {
         hackedPassword.add(Convertors.stringToByteArray("38251B4C8C210841C60CDE0B7E4C7A87"));
         final int maxPassword = 99999999; // dernier password possible
 
-        // on genere les nombres allant de 0 a 99999999 puis on les converti en chaine de caracteres
+        // on génère les nombres allant de 0 à 99999999 puis on les converti en chaine de caractères
         // on cherche le mot de passe qui correspond au mot de passe hacké
         int nbOfAccount = hackedPassword.size(); // combien de password à trouver
         long startTime = System.nanoTime(); // calcul du temps

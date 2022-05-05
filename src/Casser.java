@@ -1,10 +1,10 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Random;
 
 public class Casser {
 
-    public static final int NODE_LEN = 1000003;
+    public static final int NODE_LEN = 1000003; // taille de la table de hachage
 
     /*
      *     Calcule 1 000 000 de chaînes et stocke pour chaque
@@ -12,24 +12,24 @@ public class Casser {
      *     à adressage ouvert de taille 1 000 003
      */
     public static Noeud[] generateHashTable() {
-        Random r = new Random(0); // set la seed pour de la reproductabilité
+        Random r = new Random(0); // Set la seed pour de la reproductabilité
         Noeud[] rainbowTable = new Noeud[NODE_LEN]; // Création de la rainbowTable
         Chaine chaine = new Chaine();
         int px, p999, nbElm = 0;
-        boolean found;
+        boolean found = false;
 
-        for (int i = 0; i < 999999; i++) {//999999
-            px = r.nextInt(99999999); // Génère un nombre entre 0 et 99 999 999
+        for (int i = 0; i < 999999; i++) {
+            px = r.nextInt(100000000); // Génère un nombre entre 0 et 99 999 999
             p999 = chaine.calculChaine(px); // Egalement entre 0 et 99 999 999
             found = false;
-            for (int j = 0; j < nbElm; j++) {
-                if (rainbowTable[j].p999 == p999) { // déjà inséré
+            for (int j = 0; j < nbElm; j++) { // parcourt de tous les éléments déjà inséré
+                if (rainbowTable[j].p999 == p999) { // ce p999 est déjà inséré
                     found = true;
                     break;
                 }
             }
             if (!found) { // clé non existante
-                rainbowTable[nbElm] = new Noeud(px, p999);
+                rainbowTable[nbElm] = new Noeud(px, p999); // ajout
                 nbElm++;
             }
         }
@@ -53,7 +53,7 @@ public class Casser {
     }
 
     /*
-     *   Charge la table de hachage depuis un fichier
+     *   Charge la rainbowTable depuis un fichier
      */
     public static Noeud[] loadHashTable(String fileName) {
         Noeud[] rainbowtable = null;
@@ -73,16 +73,14 @@ public class Casser {
      */
     public static int casser(byte[] hash, Noeud[] rainbowTable) {
         Chaine chaine = new Chaine();
-        Noeud node = null;
-        int px = 0, p999 = 0;
+        int px = -1, p999 = 0;
         byte[] byteTab;
 
         for (int i = 0; i <= 999; i++) {
             p999 = chaine.reduction(hash, 999 - i);
             p999 = chaine.calculChaine(p999, 1000 - i);
 
-            for (int j = 0; j < rainbowTable.length; j++) {
-                node = rainbowTable[j];
+            for (Noeud node : rainbowTable) {
                 if (node == null)
                     break;  // on a atteint la fin de la table
                 if (node.p999 == p999) { // correspond donc on vérifie qu'il n'y ai pas de colision

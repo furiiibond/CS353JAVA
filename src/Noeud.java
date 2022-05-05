@@ -1,4 +1,6 @@
-public class Noeud {
+import java.io.Serializable;
+
+public class Noeud implements Serializable{
     public int px;
     public int p999;
 
