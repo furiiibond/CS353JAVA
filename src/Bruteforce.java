@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main {
+public class Bruteforce {
     public static void main(String[] args) {
         List<byte[]> hackedPassword = new ArrayList<>(); // mots de passe hackés par Jack Le Hacker
         hackedPassword.add(Convertors.stringToByteArray("8FC92036B2963C604DC38B2DDB305148"));

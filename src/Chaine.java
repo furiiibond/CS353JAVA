@@ -17,7 +17,8 @@ public class Chaine {
     public int calculChaine(int px) {
         if (px < 1 || px > 99999999) // entrée non conforme
             return -1;
-        for (int i = 0; i <= 999; i++)
+
+        for (int i = 0; i <= 999; i++) // on répète l'opération jusqu'à obtenir le mot de passe P999
             px = reduction(Convertors.convertStringToMD5(Convertors.numberToString(px)), i);
         return px;
     }
